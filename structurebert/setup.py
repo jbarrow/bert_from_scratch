@@ -6,16 +6,12 @@ import random
 import logging
 import tensorflow as tf
 import sentencepiece as spm
-import tqdm as tqdm
 import tempfile
 
+from tqdm import tqdm
 from pathlib import Path
 from argparse import ArgumentParser
 
-sys.path.append("bert")
-
-from bert import modeling, optimization, tokenization
-from bert.run_pretraining import input_fn_builder, model_fn_builder
 
 # configure logging
 log = logging.getLogger('tensorflow')
@@ -66,7 +62,7 @@ if __name__ == '__main__':
     temp = tempfile.NamedTemporaryFile()
     log.info('Storing processed data in temp file:', temp.name)
     with args.dataset.open(encoding="utf-8") as fp:
-        for l in tqdm(fi):
+        for l in tqdm(fp):
             temp.write(normalize_text(l)+"\n")
     temp.close()
 

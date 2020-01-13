@@ -1,4 +1,4 @@
-tensorflow
 sentencepiece
+tensorflow==1.15.0
 nltk
 tqdm
