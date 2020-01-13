@@ -1,0 +1,4 @@
+tensorflow
+sentencepiece
+nltk
+tqdm
