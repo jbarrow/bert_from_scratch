@@ -54,12 +54,12 @@ CONTROL_SYMBOLS = ["[PAD]","[UNK]","[CLS]","[SEP]","[MASK]"]
 
 if __name__ == '__main__':
     parser = ArgumentParser()
-    parser.add_argument('--model_directory', type=Path)
+    parser.add_argument('--model-directory', type=Path)
     parser.add_argument('--dataset', type=Path)
-    parser.add_argument('--vocab_file')
-    parser.add_argument('--vocab_size', type=int, default=32_000)
-    parser.add_argument('--subsample', type=int, default=12_800_000)
-    parser.add_argument('--model_prefix', default='tokenizer')
+    parser.add_argument('--vocab-file')
+    parser.add_argument('--vocab-size', type=int, default=32000)
+    parser.add_argument('--subsample', type=int, default=12800000)
+    parser.add_argument('--model-prefix', default='tokenizer')
 
     args = parser.parse_args()
 
@@ -70,22 +70,25 @@ if __name__ == '__main__':
             temp.write(normalize_text(l)+"\n")
     temp.close()
 
-    SPM_COMMAND = (f'--input={temp.name} --model_prefix={args.model_prefix} '
-                   f'--vocab_size={args.vocab_size-256} --input_sentence_size={args.subsample_size} '
-                   f'--shuffle_input_sentence=true '
-                   f'--bos_id=-1 --eos_id=-1')
+    SPM_COMMAND = ('--input={infile} --model_prefix={prefix} '
+                   '--vocab_size={vocab_size} --input_sentence_size={subsample_size} '
+                   '--shuffle_input_sentence=true '
+                   '--bos_id=-1 --eos_id=-1').format(
+        infile=temp.name, prefix=args.model_prefix, 
+        vocab_size=args.vocab_size-256, subsample_size=args.subsample_size
+    )
 
     spm.SentencePieceTrainer.Train(SPM_COMMAND)
 
     vocab = read_sentencepiece_vocab("{}.vocab".format(args.model_prefix))
-    log.info(f'Learned a vocabulary of size: {len(vocab)}')
-    log.info(f'Sample tokens: {random.sample(vocab, 10)}')
+    log.info('Learned a vocabulary of size: {}'.format(len(vocab)))
+    log.info('Sample tokens: {}'.format(random.sample(vocab, 10)))
 
     bert_vocab = [parse_sentencepiece_token(token) for token in vocab]
     bert_vocab = CONTROL_SYMBOLS + bert_vocab
     bert_vocab += ["[UNUSED_{}]".format(i) for i in range(args.vocab_size - len(bert_vocab))]
 
-    log.info(f'Final vocabulary size for BERT: {len(bert_vocab)}')
+    log.info('Final vocabulary size for BERT: {}'.format(len(bert_vocab)))
 
     bert_base_config = {
         "attention_probs_dropout_prob": 0.1,

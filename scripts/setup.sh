@@ -13,18 +13,22 @@ train_dataset=contracts_trian.txt
 validation_dataset=contracts_eval.txt
 
 # Create the model directory
-mkdir $directory ; cd $directory
+mkdir $directory 
 
 # Install the software requirements (python and BERT)
-pip3 install -r ../requirements.txt
+pip3 install --user -r structurebert/requirements.txt
 git clone https://github.com/google-research/bert
 
 # Download the training and validation data
-gsutil cp gs://contract-bert/processed/contracts_train.txt ./
+#gsutil cp gs://contract-bert/processed/contracts_train.txt ./
 gsutil cp gs://contract-bert/processed/contracts_eval.txt ./
 
 # Generate the blank BERT model.
-python3 setup.py --model_directory $directory --data $train_dataset
+python3 structurebert/structurebert/setup.py \
+		--model-directory $directory \
+		--dataset $validation_dataset \
+		--vocab-file vocab.txt \
+		--subsample 10000
 
 # mkdir ./shards
 # split -a 4 -l 256000 -d $PRC_DATA_FPATH ./shards/shard_
