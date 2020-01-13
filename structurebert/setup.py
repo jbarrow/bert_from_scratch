@@ -6,7 +6,6 @@ import random
 import logging
 import tensorflow as tf
 import sentencepiece as spm
-import tempfile
 
 from tqdm import tqdm
 from pathlib import Path
@@ -58,20 +57,19 @@ if __name__ == '__main__':
     parser.add_argument('--model-prefix', default='tokenizer')
 
     args = parser.parse_args()
+    output = Path('processed.txt')
 
-    temp = tempfile.NamedTemporaryFile()
-    log.info('Storing processed data in temp file:', temp.name)
     with args.dataset.open(encoding="utf-8") as fp:
-        for l in tqdm(fp):
-            temp.write(normalize_text(l)+"\n")
-    temp.close()
+        with output.open('w', encoding='utf-8') as fo:
+            for l in tqdm(fp):
+                fo.write(normalize_text(l)+"\n")
 
     SPM_COMMAND = ('--input={infile} --model_prefix={prefix} '
                    '--vocab_size={vocab_size} --input_sentence_size={subsample_size} '
                    '--shuffle_input_sentence=true '
                    '--bos_id=-1 --eos_id=-1').format(
-        infile=temp.name, prefix=args.model_prefix, 
-        vocab_size=args.vocab_size-256, subsample_size=args.subsample_size
+        infile=output, prefix=args.model_prefix,
+        vocab_size=args.vocab_size-256, subsample_size=args.subsample
     )
 
     spm.SentencePieceTrainer.Train(SPM_COMMAND)
@@ -111,4 +109,4 @@ if __name__ == '__main__':
 
     with (args.model_directory / args.vocab_file).open('w') as fp:
         for token in bert_vocab:
-            fo.write(token + '\n')
+            fp.write(token + '\n')
