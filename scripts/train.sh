@@ -4,7 +4,7 @@
 tpu_name=jdbarrow
 bert_base_dir=contractbert-128
 
-python run_pretraining.py \
+python bert/run_pretraining.py \
   --input_file=gs://contract-bert/train.tfrecord \
   --output_dir=gs://contractbert-128/pretraining_output \
   --do_train=True \
