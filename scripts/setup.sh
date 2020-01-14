@@ -12,6 +12,11 @@ directory=$1
 train_dataset=contracts_trian.txt
 validation_dataset=contracts_eval.txt
 
+# BERT parameters
+masked_lm_prob=0.15
+max_seq_length=128
+max_predictions_per_seq=20
+
 # Create the model directory
 mkdir $directory
 
@@ -31,25 +36,18 @@ python3 structurebert/structurebert/setup.py \
 		--vocab-file vocab.txt \
     --vocab-size 4096
 
+mkdir ./shards
+split -a 4 -l 256000 -d processed.txt ./shards/shard_
 
-# mkdir ./shards
-# split -a 4 -l 256000 -d $PRC_DATA_FPATH ./shards/shard_
-#
-# ls ./shards/ |
-#              "xargs -n 1 -P {} -I{} "
-#              "python3 bert/create_pretraining_data.py "
-#              "--input_file=./shards/{} "
-#              "--output_file={}/{}.tfrecord "
-#              "--vocab_file={} "
-#              "--do_lower_case={} "
-#              "--max_predictions_per_seq={} "
-#              "--max_seq_length={} "
-#              "--masked_lm_prob={} "
-#              "--random_seed=34 "
-#              "--dupe_factor=5"
-#
-# XARGS_CMD = XARGS_CMD.format(PROCESSES, '{}', '{}', PRETRAINING_DIR, '{}',
-#                              VOC_FNAME, DO_LOWER_CASE,
-#                              MAX_PREDICTIONS, MAX_SEQ_LENGTH, MASKED_LM_PROB)
-#
-# tf.gfile.MkDir(PRETRAINING_DIR)
+python3 bert/create_pretraining_data.py \
+  --input_file=processed.txt \
+  --output_file=train.tfrecord \
+  --vocab_file=vocab.txt \
+  --do_lower_case=True \
+  --do_whole_word_mask=True \
+  --max_predictions_per_seq=$max_predictions_per_seq \
+  --max_seq_length=$max_seq_length \
+  --masked_lm_prob=$masked_lm_prob \
+  --random_seed=34 \
+  --dupe_factor=5
+  
