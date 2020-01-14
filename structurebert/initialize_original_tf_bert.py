@@ -40,7 +40,7 @@ if __name__ == '__main__':
     parser.add_argument('--validation-dataset', type=Path)
     parser.add_argument('--vocab-file')
     parser.add_argument('--vocab-size', type=int, default=32000)
-    parser.add_argument('--subsample', type=int, default=12800000)
+    parser.add_argument('--subsample', type=int, default=4300000)
     parser.add_argument('--model-prefix', default='tokenizer')
     parser.add_argument('--processed-output-directory', type=Path, dest='output')
     parser.add_argument('--do-lower-case', action='store_true')
