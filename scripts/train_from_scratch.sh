@@ -40,8 +40,8 @@ gsutil cp gs://contract-bert/processed/$validation_dataset $data_directory/
 # Generate the blank BERT model.
 python3 structurebert/structurebert/initialize_original_tf_bert.py \
 		--model-directory $bert_directory \
-		--train-dataset $validation_dataset \
-    --validation-dataset $validation_dataset \
+		--train-dataset $data_directory/$validation_dataset \
+    --validation-dataset $data_directory/$validation_dataset \
 		--vocab-file vocab.txt \
     --vocab-size $vocab_size \
     --processed-output-directory $proc_directory \
