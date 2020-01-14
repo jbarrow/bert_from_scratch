@@ -1,7 +1,6 @@
 import os
 import sys
 import json
-import nltk
 import random
 import logging
 import tensorflow as tf
@@ -15,19 +14,6 @@ from argparse import ArgumentParser
 # configure logging
 log = logging.getLogger('tensorflow')
 log.setLevel(logging.INFO)
-
-
-regex_tokenizer = nltk.RegexpTokenizer("\w+")
-
-def normalize_text(text):
-    # lowercase text
-    text = str(text).lower()
-    # remove non-UTF
-    text = text.encode("utf-8", "ignore").decode()
-    # remove punktuation symbols
-    text = " ".join(regex_tokenizer.tokenize(text))
-
-    return text
 
 
 def read_sentencepiece_vocab(filepath):
@@ -50,25 +36,36 @@ CONTROL_SYMBOLS = ["[PAD]","[UNK]","[CLS]","[SEP]","[MASK]"]
 if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('--model-directory', type=Path)
-    parser.add_argument('--dataset', type=Path)
+    parser.add_argument('--train-dataset', type=Path)
+    parser.add_argument('--validation-dataset', type=Path)
     parser.add_argument('--vocab-file')
     parser.add_argument('--vocab-size', type=int, default=32000)
     parser.add_argument('--subsample', type=int, default=12800000)
     parser.add_argument('--model-prefix', default='tokenizer')
+    parser.add_argument('--processed-output-directory', type=Path, dest='output')
+    parser.add_argument('--do-lower-case', action='store_true')
 
     args = parser.parse_args()
-    output = Path('processed.txt')
 
-    with args.dataset.open(encoding="utf-8") as fp:
-        with output.open('w', encoding='utf-8') as fo:
+    with args.train_dataset.open(encoding="utf-8") as fp:
+        with (args.output / 'train.txt').open('w', encoding='utf-8') as fo:
             for l in tqdm(fp):
+                if args.do_lower_case:
+                    l = str(l).lower()
+                fo.write(normalize_text(l)+"\n")
+
+    with args.validation_dataset.open(encoding="utf-8") as fp:
+        with (args.output / 'validation.txt').open('w', encoding='utf-8') as fo:
+            for l in tqdm(fp):
+                if args.do_lower_case:
+                    l = str(l).lower()
                 fo.write(normalize_text(l)+"\n")
 
     SPM_COMMAND = ('--input={infile} --model_prefix={prefix} '
                    '--vocab_size={vocab_size} --input_sentence_size={subsample_size} '
                    '--shuffle_input_sentence=true '
                    '--bos_id=-1 --eos_id=-1').format(
-        infile=output, prefix=args.model_prefix,
+        infile=(args.output / 'train.txt'), prefix=args.model_prefix,
         vocab_size=args.vocab_size-256, subsample_size=args.subsample
     )
 

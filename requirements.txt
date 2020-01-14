@@ -1,5 +1,4 @@
 sentencepiece
 tensorflow==1.14.0
-nltk
 tqdm
 transformers
