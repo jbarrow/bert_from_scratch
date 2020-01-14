@@ -52,14 +52,14 @@ if __name__ == '__main__':
             for l in tqdm(fp):
                 if args.do_lower_case:
                     l = str(l).lower()
-                fo.write(normalize_text(l)+"\n")
+                fo.write(l+"\n")
 
     with args.validation_dataset.open(encoding="utf-8") as fp:
         with (args.output / 'validation.txt').open('w', encoding='utf-8') as fo:
             for l in tqdm(fp):
                 if args.do_lower_case:
                     l = str(l).lower()
-                fo.write(normalize_text(l)+"\n")
+                fo.write(l+"\n")
 
     SPM_COMMAND = ('--input={infile} --model_prefix={prefix} '
                    '--vocab_size={vocab_size} --input_sentence_size={subsample_size} '
