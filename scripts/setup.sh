@@ -36,13 +36,10 @@ python3 structurebert/structurebert/setup.py \
 		--vocab-file vocab.txt \
     --vocab-size 4096
 
-mkdir ./shards
-split -a 4 -l 256000 -d processed.txt ./shards/shard_
-
 python3 bert/create_pretraining_data.py \
   --input_file=processed.txt \
   --output_file=train.tfrecord \
-  --vocab_file=vocab.txt \
+  --vocab_file=$directory/vocab.txt \
   --do_lower_case=True \
   --do_whole_word_mask=True \
   --max_predictions_per_seq=$max_predictions_per_seq \
@@ -50,4 +47,6 @@ python3 bert/create_pretraining_data.py \
   --masked_lm_prob=$masked_lm_prob \
   --random_seed=34 \
   --dupe_factor=5
-  
+
+
+gsutil cp ./train.tfrecord gs://contract-bert/train.tfrecord
