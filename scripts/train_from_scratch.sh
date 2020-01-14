@@ -10,14 +10,14 @@
 bucket_name=$1
 tpu_name=jdbarrow
 
-train_dataset=contracts_eval.txt
+train_dataset=contracts_train.txt
 validation_dataset=contracts_eval.txt
 
 # BERT parameters
 masked_lm_prob=0.15
 max_seq_length=128
 max_predictions_per_seq=20
-vocab_size=4096
+vocab_size=32000
 
 # Create the model directory
 
@@ -79,14 +79,17 @@ gsutil -m cp -r $bucket_name/* gs://$bucket_name/
 
 python bert/run_pretraining.py \
   --input_file=gs://$tf_directory/train.tfrecord \
+
   --output_dir=gs://$tf_directory/pretraining_output \
   --do_train=True \
   --do_eval=True \
   --bert_config_file=$bert_directory/bert_config.json \
-  --train_batch_size=32 \
+  --train_batch_size=128 \
+  --eval_batch_size=64 \
   --max_seq_length=128 \
   --max_predictions_per_seq=20 \
-  --num_train_steps=20 \
+  --num_train_steps=1000000 \
+  --save_checkpoint_steps=2500 \
   --num_warmup_steps=10 \
   --learning_rate=2e-5 \
   --use_tpu=True \
