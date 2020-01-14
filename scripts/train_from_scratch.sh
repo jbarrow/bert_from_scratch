@@ -26,7 +26,7 @@ proc_directory=$bucket_name/processed
 bert_directory=$bucket_name/tf1.0
 tf_directory=$bucket_name/tfrecords
 
-mkdir $bucket_name $data_directory $proc_directory $bert_directory
+mkdir $bucket_name $data_directory $proc_directory $bert_directory $tf_directory
 
 # Install the software requirements (python and BERT)
 pip install --user -r structurebert/requirements.txt
