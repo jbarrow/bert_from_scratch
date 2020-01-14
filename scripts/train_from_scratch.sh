@@ -17,6 +17,7 @@ validation_dataset=contracts_eval.txt
 masked_lm_prob=0.15
 max_seq_length=128
 max_predictions_per_seq=20
+vocab_size=4096
 
 # Create the model directory
 
@@ -32,8 +33,8 @@ pip install --user -r structurebert/requirements.txt
 git clone https://github.com/google-research/bert
 
 # Download the training and validation data
-gsutil cp gs://contract-bert/processed/$train_dataset ./
-gsutil cp gs://contract-bert/processed/$validation_dataset ./
+gsutil cp gs://contract-bert/processed/$train_dataset $data_directory/
+gsutil cp gs://contract-bert/processed/$validation_dataset $data_directory/
 
 
 # Generate the blank BERT model.
