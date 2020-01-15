@@ -8,16 +8,16 @@
 # $2 - tpu name
 
 bucket_name=$1
-tpu_name=jdbarrow
+tpu_name=$2
 
-train_dataset=contracts_train.txt
+train_dataset=contracts_eval.txt
 validation_dataset=contracts_eval.txt
 
 # BERT parameters
 masked_lm_prob=0.15
 max_seq_length=128
 max_predictions_per_seq=20
-vocab_size=32000
+vocab_size=4096
 
 # Create the model directory
 
@@ -29,7 +29,7 @@ tf_directory=$bucket_name/tfrecords
 mkdir $bucket_name $data_directory $proc_directory $bert_directory $tf_directory
 
 # Install the software requirements (python and BERT)
-pip install --user -r structurebert/requirements.txt
+pip3 install --user -r structurebert/requirements.txt
 git clone https://github.com/google-research/bert
 
 # Download the training and validation data
@@ -60,26 +60,10 @@ python3 bert/create_pretraining_data.py \
   --random_seed=34 \
   --dupe_factor=5
 
-# Generate the validation data
-python3 bert/create_pretraining_data.py \
-  --input_file=$proc_directory/validatoin.txt \
-  --output_file=$tf_directory/validation.tfrecord \
-  --vocab_file=$bert_directory/vocab.txt \
-  --do_lower_case=True \
-  --do_whole_word_mask=True \
-  --max_predictions_per_seq=$max_predictions_per_seq \
-  --max_seq_length=$max_seq_length \
-  --masked_lm_prob=$masked_lm_prob \
-  --random_seed=34 \
-  --dupe_factor=5
-
-
 gsutil -m cp -r $bucket_name/* gs://$bucket_name/
-
 
 python bert/run_pretraining.py \
   --input_file=gs://$tf_directory/train.tfrecord \
-
   --output_dir=gs://$tf_directory/pretraining_output \
   --do_train=True \
   --do_eval=True \

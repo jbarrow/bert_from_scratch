@@ -15,6 +15,12 @@ from argparse import ArgumentParser
 log = logging.getLogger('tensorflow')
 log.setLevel(logging.INFO)
 
+def normalize_text(text, do_lower_case):
+    if do_lower_case:
+      text = str(text).lower()
+  # remove non-UTF characters so sentencepiece works
+  text = text.encode("utf-8", "ignore").decode()
+  return text
 
 def read_sentencepiece_vocab(filepath):
     voc = []
@@ -50,18 +56,14 @@ if __name__ == '__main__':
     with args.train_dataset.open(encoding="utf-8") as fp:
         with (args.output / 'train.txt').open('w', encoding='utf-8') as fo:
             for l in tqdm(fp):
-                if args.do_lower_case:
-                    l = str(l).lower()
-                fo.write(l+"\n")
+                fo.write(normalize_text(l, args.do_lower_case)+"\n")
 
     with args.validation_dataset.open(encoding="utf-8") as fp:
         with (args.output / 'validation.txt').open('w', encoding='utf-8') as fo:
             for l in tqdm(fp):
-                if args.do_lower_case:
-                    l = str(l).lower()
-                fo.write(l+"\n")
+                fo.write(normalize_text(l, args.do_lower_case)+"\n")
 
-    SPM_COMMAND = ('--input={infile} --model_prefix={prefix} '
+    SPM_COMMAND = ('--input={infile} --model_prefix={prefix} --num_threads=16'
                    '--vocab_size={vocab_size} --input_sentence_size={subsample_size} '
                    '--shuffle_input_sentence=true '
                    '--bos_id=-1 --eos_id=-1').format(

@@ -1,6 +1,8 @@
 #!/bin/bash
+# ARGUMENTS
+# $1 - bucket name
 
-bucket_name=contractbert-128-uncased
+bucket_name=$1
 
 mkdir $bucket_name $bucket_name/tf1.0 $bucket_name/pytorch
 
