@@ -48,7 +48,7 @@ tf_directory=$bucket_name/tfrecords
 #     --do-lower-case
 
 mkdir $proc_directory/shards
-split -a 4 -l 256000 -d $proc_directory $proc_directory/shards/shard_
+split -a 4 -l 256000 -d $proc_directory/train.txt $proc_directory/shards/shard_
 
 # Generate the training data
 ls $proc_directory/shards/ | xargs -n 1 -P 24 -I{} python3 bert/create_pretraining_data.py \
