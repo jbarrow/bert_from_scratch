@@ -17,10 +17,10 @@ log.setLevel(logging.INFO)
 
 def normalize_text(text, do_lower_case):
     if do_lower_case:
-      text = str(text).lower()
-  # remove non-UTF characters so sentencepiece works
-  text = text.encode("utf-8", "ignore").decode()
-  return text
+        text = str(text).lower()
+    # remove non-UTF characters so sentencepiece works
+    text = text.encode("utf-8", "ignore").decode()
+    return text
 
 def read_sentencepiece_vocab(filepath):
     voc = []
