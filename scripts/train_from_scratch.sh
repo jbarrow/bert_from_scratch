@@ -26,32 +26,32 @@ proc_directory=$bucket_name/processed
 bert_directory=$bucket_name/tf1.0
 tf_directory=$bucket_name/tfrecords
 
-mkdir $bucket_name $data_directory $proc_directory $bert_directory $tf_directory
-
-# Install the software requirements (python and BERT)
-pip3 install --user -r bert_from_scratch/requirements.txt
-git clone https://github.com/google-research/bert
-
-# Download the training and validation data
-gsutil cp gs://contract-bert/processed/$train_dataset $data_directory/
-gsutil cp gs://contract-bert/processed/$validation_dataset $data_directory/
-
-
-# Generate the blank BERT model.
-python3 bert_from_scratch/structurebert/initialize_original_tf_bert.py \
-		--model-directory $bert_directory \
-		--train-dataset $data_directory/$train_dataset \
-    --validation-dataset $data_directory/$validation_dataset \
-		--vocab-file vocab.txt \
-    --vocab-size $vocab_size \
-    --processed-output-directory $proc_directory \
-    --do-lower-case
+# mkdir $bucket_name $data_directory $proc_directory $bert_directory $tf_directory
+#
+# # Install the software requirements (python and BERT)
+# pip3 install --user -r bert_from_scratch/requirements.txt
+# git clone https://github.com/google-research/bert
+#
+# # Download the training and validation data
+# gsutil cp gs://contract-bert/processed/$train_dataset $data_directory/
+# gsutil cp gs://contract-bert/processed/$validation_dataset $data_directory/
+#
+#
+# # Generate the blank BERT model.
+# python3 bert_from_scratch/structurebert/initialize_original_tf_bert.py \
+# 		--model-directory $bert_directory \
+# 		--train-dataset $data_directory/$train_dataset \
+#     --validation-dataset $data_directory/$validation_dataset \
+# 		--vocab-file vocab.txt \
+#     --vocab-size $vocab_size \
+#     --processed-output-directory $proc_directory \
+#     --do-lower-case
 
 mkdir $proc_directory/shards
-split -a 4 -l 256000 -d $proc_directory ./shards/shard_
+split -a 4 -l 256000 -d $proc_directory $proc_directory/shards/shard_
 
 # Generate the training data
-ls ./shards/ | xargs -n 1 -P 24 -I{} python3 bert/create_pretraining_data.py \
+ls $proc_directory/shards/ | xargs -n 1 -P 24 -I{} python3 bert/create_pretraining_data.py \
   --input_file=$proc_directory/shards/{} \
   --output_file=$tf_directory/{}.tfrecord \
   --vocab_file=$bert_directory/vocab.txt \
