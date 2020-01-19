@@ -5,11 +5,10 @@
 
 # ARGUMENTS
 # $1 - bucket name (we'll use this both locally and on GCE)
+# $2 - text file to train from
 
 bucket_name=$1
-
-train_dataset=contracts_train.txt
-validation_dataset=contracts_eval.txt
+train_dataset=$2
 
 # BERT parameters
 masked_lm_prob=0.15
@@ -30,16 +29,13 @@ mkdir $bucket_name $data_directory $proc_directory $bert_directory $tf_directory
 pip3 install --user -r bert_from_scratch/requirements.txt
 git clone https://github.com/google-research/bert
 
-# Download the training and validation data
+# Download the training 
 gsutil cp gs://contract-bert/processed/$train_dataset $data_directory/
-gsutil cp gs://contract-bert/processed/$validation_dataset $data_directory/
-
 
 # Generate the blank BERT model.
-python3 bert_from_scratch/structurebert/initialize_original_tf_bert.py \
+python3 bert_from_scratch/bert_from_scratch/initialize_original_tf_bert.py \
     --model-directory $bert_directory \
     --train-dataset $data_directory/$train_dataset \
-    --validation-dataset $data_directory/$validation_dataset \
     --vocab-file vocab.txt \
     --vocab-size $vocab_size \
     --processed-output-directory $proc_directory \

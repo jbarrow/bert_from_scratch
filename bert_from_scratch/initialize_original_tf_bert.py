@@ -43,7 +43,6 @@ if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('--model-directory', type=Path)
     parser.add_argument('--train-dataset', type=Path)
-    parser.add_argument('--validation-dataset', type=Path)
     parser.add_argument('--vocab-file')
     parser.add_argument('--vocab-size', type=int, default=32000)
     parser.add_argument('--subsample', type=int, default=4300000)
@@ -55,11 +54,6 @@ if __name__ == '__main__':
 
     with args.train_dataset.open(encoding="utf-8") as fp:
         with (args.output / 'train.txt').open('w', encoding='utf-8') as fo:
-            for l in tqdm(fp):
-                fo.write(normalize_text(l, args.do_lower_case)+"\n")
-
-    with args.validation_dataset.open(encoding="utf-8") as fp:
-        with (args.output / 'validation.txt').open('w', encoding='utf-8') as fo:
             for l in tqdm(fp):
                 fo.write(normalize_text(l, args.do_lower_case)+"\n")
 
