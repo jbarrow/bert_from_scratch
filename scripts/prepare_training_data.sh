@@ -29,7 +29,7 @@ mkdir $bucket_name $data_directory $proc_directory $bert_directory $tf_directory
 pip3 install --user -r bert_from_scratch/requirements.txt
 git clone https://github.com/google-research/bert
 
-# Download the training 
+# Download the training
 gsutil cp gs://contract-bert/processed/$train_dataset $data_directory/
 
 # Generate the blank BERT model.

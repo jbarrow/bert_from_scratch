@@ -5,9 +5,9 @@
 bucket_name=$1
 checkpoint_num=1000000
 
-#mkdir $bucket_name $bucket_name/tf1.0 $bucket_name/pytorch
+mkdir $bucket_name $bucket_name/tf1.0 $bucket_name/pytorch
 
-#gsutil -m cp -r gs://$bucket_name/tf1.0 $bucket_name
+gsutil -m cp -r gs://$bucket_name/tf1.0 $bucket_name
 
 cp $bucket_name/tf1.0/vocab.txt $bucket_name/pytorch/vocab.txt
 cp $bucket_name/tf1.0/bert_config.json $bucket_name/pytorch/config.json
