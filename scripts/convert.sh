@@ -16,3 +16,8 @@ python3 -m transformers.convert_bert_original_tf_checkpoint_to_pytorch \
   --tf_checkpoint_path $bucket_name/tf1.0/pretraining_output/model.ckpt-$checkpoint_num \
   --bert_config_file $bucket_name/tf1.0/bert_config.json \
   --pytorch_dump_path $bucket_name/pytorch/pytorch_model.bin
+
+# python3 -m transformers.convert_bert_original_tf_checkpoint_to_pytorch \
+#   --tf_checkpoint_path $bucket_name/tf1.0/model.ckpt-$checkpoint_num \
+#   --bert_config_file $bucket_name/tf1.0/bert_config.json \
+#   --pytorch_dump_path $bucket_name/pytorch/pytorch_model.bin

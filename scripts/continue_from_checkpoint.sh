@@ -17,7 +17,7 @@ tf_directory=$bucket_name/tfrecords
 
 python3 bert/run_pretraining.py \
   --input_file=gs://$tf_directory/*.tfrecord \
-  --output_dir=gs://$bert_directory/pretraining_output \
+  --output_dir=gs://$bert_directory \
   --do_train=True \
   --do_eval=True \
   --bert_config_file=$bert_directory/bert_config.json \
