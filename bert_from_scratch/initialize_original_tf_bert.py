@@ -45,7 +45,7 @@ if __name__ == '__main__':
     parser.add_argument('--train-dataset', type=Path)
     parser.add_argument('--vocab-file')
     parser.add_argument('--vocab-size', type=int, default=32000)
-    parser.add_argument('--subsample', type=int, default=43000000)
+    parser.add_argument('--subsample', type=int, default=430000)
     parser.add_argument('--model-prefix', default='tokenizer')
     parser.add_argument('--processed-output-directory', type=Path, dest='output')
     parser.add_argument('--do-lower-case', action='store_true')
@@ -58,8 +58,8 @@ if __name__ == '__main__':
                 fo.write(normalize_text(l, args.do_lower_case)+"\n")
 
     SPM_COMMAND = ('--input={infile} --model_prefix={prefix} --num_threads=16'
-                   '--vocab_size={vocab_size} '
-                   '--shuffle_input_sentence=true '
+                   '--vocab_size={vocab_size} --character_coverage=1.0 '
+                   '--shuffle_input_sentence=true --use_all_vocab=true '
                    '--bos_id=-1 --eos_id=-1').format(
         infile=(args.output / 'train.txt'), prefix=args.model_prefix,
         vocab_size=args.vocab_size-256

@@ -2,3 +2,4 @@ sentencepiece
 tensorflow==1.15.0
 tqdm
 transformers
+pandas
