@@ -1,48 +1,33 @@
 #!/bin/bash
 
-# Script to install the necessary requirements, download the data, and setup an
-# empty BERT model with a vocab based on the dataset.
-
 # ARGUMENTS
 # $1 - bucket name (we'll use this both locally and on GCE)
 # $2 - text file to train from
+# $3 - bert directory
 
 bucket_name=$1
 train_dataset=$2
+bert_directory=$3
 
 # BERT parameters
 masked_lm_prob=0.15
-max_seq_length=128
-max_predictions_per_seq=20
+max_seq_length=512
+max_predictions_per_seq=80
 vocab_size=32000
 
 # Create the model directory
 
 data_directory=data
 proc_directory=$bucket_name/processed
-bert_directory=$bucket_name/tf1.0
 tf_directory=$bucket_name/tfrecords
 
-mkdir $bucket_name $data_directory $proc_directory $bert_directory $tf_directory
+mkdir -p $bucket_name \
+        $data_directory \
+        $proc_directory \
+        $tf_directory \
+        $proc_directory/shards
 
-# Install the software requirements (python and BERT)
-pip3 install --user -r bert_from_scratch/requirements.txt
-git clone https://github.com/google-research/bert
-
-# Download the training
-gsutil cp gs://contract-bert/processed/$train_dataset $data_directory/
-
-# Generate the blank BERT model.
-python3 bert_from_scratch/bert_from_scratch/initialize_original_tf_bert.py \
-    --model-directory $bert_directory \
-    --train-dataset $data_directory/$train_dataset \
-    --vocab-file vocab.txt \
-    --vocab-size $vocab_size \
-    --processed-output-directory $proc_directory \
-    --do-lower-case
-
-mkdir $proc_directory/shards
-split -a 4 -l 256000 -d $proc_directory/train.txt $proc_directory/shards/shard_
+split -a 4 -l 256000 -d $train_dataset $proc_directory/shards/shard_
 
 # Generate the training data
 ls $proc_directory/shards/ | xargs -n 1 -P 24 -I{} python3 bert/create_pretraining_data.py \
